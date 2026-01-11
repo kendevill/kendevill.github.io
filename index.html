@@ -1,62 +1,164 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <title>Upload ảnh FreeImage.host</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload ảnh FreeImage.host</title>
+
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f5f9;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+
+h3 {
+  margin: 0 0 15px 0;
+  background: #0b4f6c;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+input[type=file],
+input[type=text] {
+  width: 100%;
+  margin: 8px 0;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  background: #0b4f6c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+#previewImage {
+  max-width: 100%;
+  max-height: 220px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 10px;
+}
+
+.result img {
+  margin-top: 10px;
+  max-width: 100%;
+  border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <div class="card">
-        <h3>📷 Upload ảnh</h3>
+  <div class="card">
+    <h3>📷 Upload ảnh</h3>
 
-        <form action="upload.php" method="post" enctype="multipart/form-data">
-            <label>Chọn ảnh *</label>
-            <input type="file" name="image" id="imageInput" accept="image/*" required>
+    <input type="file" id="fileInput" accept="image/*">
 
-            <!-- PREVIEW -->
-            <div id="previewBox" style="display:none">
-                <p>Xem trước:</p>
-                <img id="previewImage">
-            </div>
+    <img id="previewImage" style="display:none">
 
-            <p class="note">Chấp nhận: JPG, PNG, GIF, WEBP. Tối đa: 64MB</p>
+    <button id="uploadBtn">⬆ Upload ảnh</button>
 
-            <button type="submit">⬆ Upload ảnh</button>
-        </form>
+    <div class="result" id="result"></div>
+  </div>
 
-        <?php if (!empty($_GET['link'])): ?>
-            <div class="result">
-                <p>Link ảnh:</p>
-                <input type="text" value="<?= htmlspecialchars($_GET['link']) ?>" onclick="this.select()">
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <div class="card">
-        <h3>❓ FAQ</h3>
-        <p><b>Link ảnh có hết hạn không?</b><br>Không, link vĩnh viễn.</p>
-        <p><b>Ảnh có bị nén không?</b><br>Giữ nguyên chất lượng.</p>
-    </div>
+  <div class="card">
+    <h3>❓ Thông tin</h3>
+    <p>• Upload trực tiếp lên FreeImage.host</p>
+    <p>• Link vĩnh viễn</p>
+    <p>• Không cần backend</p>
+  </div>
 </div>
 
 <script>
-const input = document.getElementById('imageInput');
-const previewBox = document.getElementById('previewBox');
-const previewImage = document.getElementById('previewImage');
+const API_KEY = "6d207e02198a847aa98d0a2a901485a5"; // ❌ LỘ API KEY
 
-input.addEventListener('change', function () {
-    const file = this.files[0];
-    if (!file) return;
+const fileInput = document.getElementById("fileInput");
+const preview = document.getElementById("previewImage");
+const uploadBtn = document.getElementById("uploadBtn");
+const result = document.getElementById("result");
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        previewImage.src = e.target.result;
-        previewBox.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+/* Preview */
+fileInput.addEventListener("change", () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    preview.src = e.target.result;
+    preview.style.display = "block";
+  };
+  reader.readAsDataURL(file);
+});
+
+/* Upload */
+uploadBtn.addEventListener("click", async () => {
+  const file = fileInput.files[0];
+  if (!file) return alert("Chưa chọn ảnh");
+
+  uploadBtn.disabled = true;
+  uploadBtn.innerText = "Đang upload...";
+
+  const fd = new FormData();
+  fd.append("source", file);
+
+  try {
+    const res = await fetch(
+      `https://freeimage.host/api/1/upload?key=${API_KEY}`,
+      { method: "POST", body: fd }
+    );
+
+    const data = await res.json();
+
+    if (!data.image) throw "Upload lỗi";
+
+    result.innerHTML = `
+      <p>Link ảnh:</p>
+      <input type="text" value="${data.image.url}" onclick="this.select()">
+      <img src="${data.image.url}">
+    `;
+  } catch {
+    alert("Upload thất bại");
+  }
+
+  uploadBtn.disabled = false;
+  uploadBtn.innerText = "⬆ Upload ảnh";
 });
 </script>
 
