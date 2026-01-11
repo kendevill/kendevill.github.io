@@ -1,1 +1,64 @@
-úp ảnh đi nào
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Upload ảnh FreeImage.host</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h3>📷 Upload ảnh</h3>
+
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+            <label>Chọn ảnh *</label>
+            <input type="file" name="image" id="imageInput" accept="image/*" required>
+
+            <!-- PREVIEW -->
+            <div id="previewBox" style="display:none">
+                <p>Xem trước:</p>
+                <img id="previewImage">
+            </div>
+
+            <p class="note">Chấp nhận: JPG, PNG, GIF, WEBP. Tối đa: 64MB</p>
+
+            <button type="submit">⬆ Upload ảnh</button>
+        </form>
+
+        <?php if (!empty($_GET['link'])): ?>
+            <div class="result">
+                <p>Link ảnh:</p>
+                <input type="text" value="<?= htmlspecialchars($_GET['link']) ?>" onclick="this.select()">
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="card">
+        <h3>❓ FAQ</h3>
+        <p><b>Link ảnh có hết hạn không?</b><br>Không, link vĩnh viễn.</p>
+        <p><b>Ảnh có bị nén không?</b><br>Giữ nguyên chất lượng.</p>
+    </div>
+</div>
+
+<script>
+const input = document.getElementById('imageInput');
+const previewBox = document.getElementById('previewBox');
+const previewImage = document.getElementById('previewImage');
+
+input.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewBox.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+});
+</script>
+
+</body>
+</html>
