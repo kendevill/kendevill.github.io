@@ -1,166 +1,289 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upload ảnh FreeImage.host</title>
-
-<style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f2f5f9;
-}
-
-.container {
-  max-width: 1000px;
-  margin: 20px auto;
-  padding: 10px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.1);
-}
-
-h3 {
-  margin: 0 0 15px 0;
-  background: #0b4f6c;
-  color: #fff;
-  padding: 10px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-input[type=file],
-input[type=text] {
-  width: 100%;
-  margin: 8px 0;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  font-size: 15px;
-  background: #0b4f6c;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-
-#previewImage {
-  max-width: 100%;
-  max-height: 220px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 4px;
-  margin-top: 10px;
-}
-
-.result img {
-  margin-top: 10px;
-  max-width: 100%;
-  border-radius: 6px;
-}
-
-@media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+  <meta charset="utf-8">
+  <title>Tạo mã QR Chuyển Tiền</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', Arial, sans-serif; 
+      background: linear-gradient(145deg, #f0f9ff, #e0f2fe);
+      margin: 0; 
+      padding: 0;
+      color: #0f172a;
+    }
+    .container {
+      max-width: 480px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      color: #0284c7;
+      margin-bottom: 12px;
+    }
+    p.subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+    label { 
+      display: block; 
+      margin-top: 12px; 
+      font-weight: 600; 
+      font-size: 14px; 
+      color: #334155;
+    }
+    select, input, textarea {
+      width: 100%;
+      margin-top: 6px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: #0ea5e9;
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #0284c7);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 22px;
+      transition: all 0.2s;
+    }
+    button:hover {
+      background: linear-gradient(90deg, #0284c7, #0369a1);
+      transform: scale(1.02);
+    }
+    .qr-box {
+      text-align: center;
+      margin-top: 28px;
+    }
+    img.qr {
+      background: #fff;
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .actions button {
+      width: auto;
+      font-size: 14px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: #10b981;
+    }
+    .actions button:hover {
+      background: #059669;
+    }
+    .history {
+      margin-top: 30px;
+    }
+    .history h3 {
+      margin-bottom: 10px;
+      color: #0284c7;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      gap: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .history-item img {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .history-info {
+      flex: 1;
+      font-size: 13px;
+      color: #334155;
+    }
+    .history button {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    footer {
+      text-align: center;
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 24px;
+    }
+    footer a { color: #0284c7; text-decoration: none; }
+  </style>
 </head>
-
 <body>
+  <div class="container">
+    <h1>Tạo mã QR Chuyển Tiền</h1>
 
-<div class="container">
-  <div class="card">
-    <h3>📷 Upload ảnh</h3>
 
-    <input type="file" id="fileInput" accept="image/*">
+    <form id="qrForm" onsubmit="return false;">
+      <label>Ngân hàng</label>
+      <select id="bank" required>
+        <option value="">-- Chọn ngân hàng --</option>
+        <option value="VCB">Vietcombank</option>
+        <option value="MB">MB Bank</option>
+        <option value="ACB">ACB</option>
+        <option value="TCB">Techcombank</option>
+        <option value="BIDV">BIDV</option>
+        <option value="VTB">VietinBank</option>
+        <option value="TPB">TPBank</option>
+        <option value="HDB">HDBank</option>
+        <option value="VPB">VPBank</option>
+        <option value="OCB">OCB</option>
+        <option value="VIB">VIB</option>
+        <option value="SHB">SHB</option>
+        <option value="LPB">LienVietPostBank</option>
+        <option value="SCB">SCB</option>
+      </select>
 
-    <img id="previewImage" style="display:none">
+      <label>Số tài khoản</label>
+      <input type="text" id="account" placeholder="Nhập số tài khoản" required>
 
-    <button id="uploadBtn">⬆ Upload ảnh</button>
+      <label>Số tiền (VNĐ)</label>
+      <input type="number" id="amount" placeholder="Ví dụ: 100000" min="0">
 
-    <div class="result" id="result"></div>
+      <label>Nội dung chuyển khoản</label>
+      <textarea id="desc" placeholder="Nhập nội dung chuyển tiền"></textarea>
+
+      <button type="button" onclick="generateQR()">Tạo mã QR</button>
+    </form>
+
+    <div id="qrResult" class="qr-box" style="display:none;">
+      <h3>Kết quả QR:</h3>
+      <img id="qrImage" class="qr" src="" alt="QR Code" width="260" height="260">
+      <div class="actions">
+        <button onclick="downloadQR()">Tải ảnh QR</button>
+      </div>
+    </div>
+
+    <div class="history" id="historyBox" style="display:none;">
+      <h3>Lịch sử QR gần đây</h3>
+      <div id="historyList"></div>
+    </div>
+
+    <footer>© 2025 - Tạo QR VietQR qua <a href="https://phanken.pro" target="_blank">PhanKen.Pro</a></footer>
   </div>
 
-  <div class="card">
-    <h3>❓ Thông tin</h3>
-    <p>• Upload trực tiếp lên FreeImage.host</p>
-    <p>• Link vĩnh viễn</p>
-    <p>• Không cần backend</p>
-  </div>
-</div>
+  <script>
+    function generateQR() {
+      const bank = document.getElementById('bank').value.trim();
+      const acc = document.getElementById('account').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+      const desc = encodeURIComponent(document.getElementById('desc').value.trim());
 
-<script>
-const API_KEY = "6d207e02198a847aa98d0a2a901485a5"; // ❌ LỘ API KEY
+      if (!bank || !acc) {
+        alert('Vui lòng nhập đầy đủ Ngân hàng và Số tài khoản.');
+        return;
+      }
 
-const fileInput = document.getElementById("fileInput");
-const preview = document.getElementById("previewImage");
-const uploadBtn = document.getElementById("uploadBtn");
-const result = document.getElementById("result");
+      let url = `https://qr.sepay.vn/img?acc=${acc}&bank=${bank}`;
+      if (amount) url += `&amount=${amount}`;
+      if (desc) url += `&des=${desc}`;
+      url += `&template=compact`;
 
-/* Preview */
-fileInput.addEventListener("change", () => {
-  const file = fileInput.files[0];
-  if (!file) return;
+      document.getElementById('qrImage').src = url;
+      document.getElementById('qrResult').style.display = 'block';
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    preview.src = e.target.result;
-    preview.style.display = "block";
-  };
-  reader.readAsDataURL(file);
-});
+      saveToHistory(bank, acc, amount, decodeURIComponent(desc), url);
+      loadHistory();
+    }
 
-/* Upload */
-uploadBtn.addEventListener("click", async () => {
-  const file = fileInput.files[0];
-  if (!file) return alert("Chưa chọn ảnh");
+    async function downloadQR() {
+      const imgSrc = document.getElementById('qrImage').src;
+      const bank = document.getElementById('bank').value.trim();
+      const amount = document.getElementById('amount').value.trim() || '0';
+      const filename = `QR_${bank}_${amount}.png`;
 
-  uploadBtn.disabled = true;
-  uploadBtn.innerText = "Đang upload...";
+      try {
+        const response = await fetch(imgSrc, { mode: 'cors' });
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      } catch (e) {
+        alert('Không thể tải ảnh trực tiếp. Vui lòng mở ảnh và lưu thủ công.');
+      }
+    }
 
-  const fd = new FormData();
-  fd.append("source", file);
+    function saveToHistory(bank, acc, amount, desc, url) {
+      const history = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+      const newItem = { bank, acc, amount, desc, url };
+      history.unshift(newItem);
+      if (history.length > 5) history.pop();
+      localStorage.setItem('qrHistory', JSON.stringify(history));
+    }
 
-  try {
-    const res = await fetch(
-      `https://freeimage.host/api/1/upload?key=${API_KEY}`,
-      { method: "POST", body: fd }
-    );
+    function loadHistory() {
+      const list = document.getElementById('historyList');
+      const data = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+      list.innerHTML = '';
+      if (data.length === 0) {
+        document.getElementById('historyBox').style.display = 'none';
+        return;
+      }
+      document.getElementById('historyBox').style.display = 'block';
+      data.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'history-item';
+        div.innerHTML = `
+          <img src="${item.url}" alt="qr">
+          <div class="history-info">
+            <strong>${item.bank}</strong> - ${item.acc}<br>
+            ${item.amount ? item.amount + '₫' : 'Không có số tiền'}<br>
+            <small>${item.desc || '(Không có nội dung)'}</small>
+          </div>
+          <button onclick="useHistory(${i})">Tạo lại</button>
+        `;
+        list.appendChild(div);
+      });
+    }
 
-    const data = await res.json();
+    function useHistory(index) {
+      const data = JSON.parse(localStorage.getItem('qrHistory') || '[]');
+      const item = data[index];
+      if (!item) return;
+      document.getElementById('bank').value = item.bank;
+      document.getElementById('account').value = item.acc;
+      document.getElementById('amount').value = item.amount;
+      document.getElementById('desc').value = item.desc;
+      generateQR();
+    }
 
-    if (!data.image) throw "Upload lỗi";
-
-    result.innerHTML = `
-      <p>Link ảnh:</p>
-      <input type="text" value="${data.image.url}" onclick="this.select()">
-      <img src="${data.image.url}">
-    `;
-  } catch {
-    alert("Upload thất bại");
-  }
-
-  uploadBtn.disabled = false;
-  uploadBtn.innerText = "⬆ Upload ảnh";
-});
-</script>
-
+    loadHistory();
+  </script>
 </body>
 </html>
